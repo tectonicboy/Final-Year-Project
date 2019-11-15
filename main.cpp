@@ -155,10 +155,20 @@ int main() {
 		}
 		cout << "\n";
 	}
-	string s1 = "0100110011010111", s2 = "00001111011";
-	bin_num N1(s1), N2(s2), N3 = Add_Two(N1, N2);
+	string s1 = "11101111", s2 = "11111111";
+	bin_num N1(s1), N2(s2), N3 = N1 + N2, N4 = N1 * N2, N5 = N2 - N1, N6 = N1 - N2;
+	cout << "\n***********************************************\n";
 	N1.Print_Num();
+	cout << "\tProperties of N1: MSB = " << N1.MSB << ", LSB = " << N1.LSB << ", size = " << N1.size << "\n";
 	N2.Print_Num();
+	cout << "\tProperties of N2: MSB = " << N2.MSB << ", LSB = " << N2.LSB << ", size = " << N2.size << "\n";
 	N3.Print_Num();
+	cout << "\tProperties of N1 + N2: MSB = " << N3.MSB << ", LSB = " << N3.LSB << ", size = " << N3.size << "\n";
+	N4.Print_Num();
+	cout << "\tProperties of N1 * N2: MSB = " << N4.MSB << ", LSB = " << N4.LSB << ", size = " << N4.size << "\n";
+	N5.Print_Num();
+	cout << "\tProperties of N2 - N1: MSB = " << N5.MSB << ", LSB = " << N5.LSB << ", size = " << N5.size << "\n";
+	N6.Print_Num();
+	cout << "\tProperties of N1 - N2: MSB = " << N6.MSB << ", LSB = " << N6.LSB << ", size = " << N6.size << "\n";
 	return 0;
 }
