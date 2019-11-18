@@ -10,7 +10,7 @@ using namespace std;
 Furthermore, the template function assumes that the following functionality for type T exists:
 0. There is a function called Nullify which intakes a variable of type T and makes it equal to zero.
 1. There is a function called LCM that intakes two arguments of type T as input and finds their lowest common multiple, outputting a 3rd variable of type T.
-2. operator-=, operator>= and operator++ are defined for type T.
+2. operator-=, operator>=, operator++, operator--, operator+ and operator- are defined for type T.
 3. You can instantiate a variable of type T as zero by writing T var_name(0), where 0 is an int.
 */
 template <typename T>
