@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "functions.h"
+#include "bin_int.h"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ int main() {
 
 	//*************************** SOLVING THE SIMULTANEOUS EQUATIONS ********************************
 
-	double M[32][32];
+	double V[32][32];
 
 	int r, c, d1 = 0, d2 = 0;
 	double d3;
@@ -48,7 +48,7 @@ int main() {
 	//Make up a system of equations (populating the augmented matrix)
 	while (d1 < r) {
 		while (cin >> d3) {
-			M[d1][d2] = d3;
+			V[d1][d2] = d3;
 			++d2;
 			if (d2 >= c) { goto label; }
 		}
@@ -62,7 +62,7 @@ int main() {
 	//print matrix
 	for (int F = 0; F < r; ++F) {
 		for (int D = 0; D < c; ++D) {
-			cout << M[F][D] << " ";
+			cout << V[F][D] << " ";
 		}
 		cout << "\n";
 	}
@@ -72,21 +72,21 @@ int main() {
 	double aux;
 
 	while (c_pivot < c-1) {
-		cout << "PIVOT column: " << c_pivot << ", PIVOT = " << M[r_pivot][c_pivot] << "\n";
+		cout << "PIVOT column: " << c_pivot << ", PIVOT = " << V[r_pivot][c_pivot] << "\n";
 		while (r_curr <= r-1) {
-			aux = (M[r_curr][c_pivot] / M[r_pivot][c_pivot]) * (-1);
+			aux = (V[r_curr][c_pivot] / V[r_pivot][c_pivot]) * (-1);
 			cout << "\t COMPUTED AUX = " << aux << "\n";
 			for (int F = 0; F < c; ++F) {
-				cout << "\t\t COMPUTING: M[" << r_curr << "][" << F << "] => " << aux << " * " << M[r_pivot][F] << " = " 
-					<< aux * M[r_pivot][F] << "\n";
-				M[r_curr][F] += aux * M[r_pivot][F];
+				cout << "\t\t COMPUTING: M[" << r_curr << "][" << F << "] => " << aux << " * " << V[r_pivot][F] << " = " 
+					<< aux * V[r_pivot][F] << "\n";
+				V[r_curr][F] += aux * V[r_pivot][F];
 			}
 			++r_curr;
 			cout << "Changed matrix to: \n";
 			//print matrix
 			for (int F = 0; F < r; ++F) {
 				for (int D = 0; D < c; ++D) {
-					cout << M[F][D] << " ";
+					cout << V[F][D] << " ";
 				}
 				cout << "\n";
 			}
@@ -102,7 +102,7 @@ int main() {
 	//print matrix
 	for (int F = 0; F < r; ++F) {
 		for (int D = 0; D < c; ++D) {
-			cout << M[F][D] << " ";
+			cout << V[F][D] << " ";
 		}
 		cout << "\n";
 	}
@@ -110,19 +110,19 @@ int main() {
 
 	r_pivot = r-1, c_pivot = c - 2, r_curr = r_pivot - 1;
 	while (c_pivot > 0) {
-		cout << "PIVOT column: " << c_pivot << ", PIVOT = " << M[r_pivot][c_pivot] << "\n";
+		cout << "PIVOT column: " << c_pivot << ", PIVOT = " << V[r_pivot][c_pivot] << "\n";
 		while (r_curr >= 0) {
-			aux = (M[r_curr][c_pivot] / M[r_pivot][c_pivot]) * (-1);
+			aux = (V[r_curr][c_pivot] / V[r_pivot][c_pivot]) * (-1);
 			cout << "\t COMPUTED AUX = " << aux << "\n";
 			for (int F = 0; F < c; ++F) {
-				M[r_curr][F] += aux * M[r_pivot][F];
+				V[r_curr][F] += aux * V[r_pivot][F];
 			}
 			--r_curr;
 			cout << "Changed matrix to: \n";
 			//print matrix
 			for (int F = 0; F < r; ++F) {
 				for (int D = 0; D < c; ++D) {
-					cout << M[F][D] << " ";
+					cout << V[F][D] << " ";
 				}
 				cout << "\n";
 			}
@@ -137,38 +137,58 @@ int main() {
 	//print matrix
 	for (int F = 0; F < r; ++F) {
 		for (int D = 0; D < c; ++D) {
-			cout << M[F][D] << " ";
+			cout << V[F][D] << " ";
 		}
 		cout << "\n";
 	}
 
 	for (int F = 0; F < r; ++F) {
-		M[F][c - 1] /= M[F][F];
-		M[F][F] = 1;
+		V[F][c - 1] /= V[F][F];
+		V[F][F] = 1;
 	}
 
 	cout << "The solution matrix:\n";
 	//print matrix
 	for (int F = 0; F < r; ++F) {
 		for (int D = 0; D < c; ++D) {
-			cout << M[F][D] << " ";
+			cout << V[F][D] << " ";
 		}
 		cout << "\n";
 	}
-	string s1 = "11101111", s2 = "11111111";
-	bin_num N1(s1), N2(s2), N3 = N1 + N2, N4 = N1 * N2, N5 = N2 - N1, N6 = N1 - N2;
-	cout << "\n***********************************************\n";
-	N1.Print_Num();
-	cout << "\tProperties of N1: MSB = " << N1.MSB << ", LSB = " << N1.LSB << ", size = " << N1.size << "\n";
-	N2.Print_Num();
-	cout << "\tProperties of N2: MSB = " << N2.MSB << ", LSB = " << N2.LSB << ", size = " << N2.size << "\n";
-	N3.Print_Num();
-	cout << "\tProperties of N1 + N2: MSB = " << N3.MSB << ", LSB = " << N3.LSB << ", size = " << N3.size << "\n";
-	N4.Print_Num();
-	cout << "\tProperties of N1 * N2: MSB = " << N4.MSB << ", LSB = " << N4.LSB << ", size = " << N4.size << "\n";
-	N5.Print_Num();
-	cout << "\tProperties of N2 - N1: MSB = " << N5.MSB << ", LSB = " << N5.LSB << ", size = " << N5.size << "\n";
-	N6.Print_Num();
-	cout << "\tProperties of N1 - N2: MSB = " << N6.MSB << ", LSB = " << N6.LSB << ", size = " << N6.size << "\n";
+
+
+	string Sx = "0011000", Sy = "1010001", Sz = "1111111";
+	bin_int Nx(Sx), Ny(Sy), Nz(Sz);
+
+	cout << "\n\n\n \t\t************TESTING BIN_INT***************\n\n\n";
+
+	cout << "Ex. one: 12 - 69 = Nx - Ny.\n"; Nx.Print_Num(); cout << "\n-\n"; Ny.Print_Num(); cout << "\n----------\n";
+	bin_int N11 = Nx - Ny;
+	N11.Print_Num(); cout << "\n";
+
+	cout << "\n\n";
+
+	cout << "Ex. two: 127 - 69 = Nz - Ny.\n"; Nz.Print_Num(); cout << "\n-\n"; Ny.Print_Num(); cout << "\n----------\n";
+	bin_int N12 = Nz - Ny;
+	N12.Print_Num(); cout << "\n";
+
+	cout << "\n\n";
+
+	cout << "Ex. three: 69 - 69 = Ny - Ny.\n"; Ny.Print_Num(); cout << "\n-\n"; Ny.Print_Num(); cout << "\n----------\n";
+	bin_int N13 = Ny - Ny;
+	N13.Print_Num(); cout << "\n";
+
+	cout << "\n\n";
+
+	cout << "Ex. four: 127 - 12 = Nz - Nx.\n"; Nz.Print_Num(); cout << "\n-\n"; Nx.Print_Num(); cout << "\n----------\n";
+	bin_int N14 = Nz - Nx;
+	N14.Print_Num(); cout << "\n";
+
+	cout << "\n\n";
+
+	cout << "Ex. five: 12 - 127 = Nz - Ny.\n"; Nx.Print_Num(); cout << "\n-\n"; Nz.Print_Num(); cout << "\n----------\n";
+	bin_int N15 = Nx - Nz;
+	N15.Print_Num(); cout << "\n";
+
 	return 0;
 }
