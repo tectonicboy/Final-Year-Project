@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-
+	//15 and -15
 	string Sx = "1111000000000000", Sy = "1000111111111111";
 	bin_int Nx(Sx), Ny(Sy); 
 	bin_int N1 = Nx + Ny, N2 = Nx * Nx, N3 = Nx - Ny;
