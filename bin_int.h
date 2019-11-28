@@ -51,10 +51,6 @@ public:
 		}
 	}
 
-	bin_int min(bin_int&) {
-
-	}
-
 	void Nullify() {
 		for (bvec_size s = 0; s < this->size; ++s) {
 			N[s] = false;
