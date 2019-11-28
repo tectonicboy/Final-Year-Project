@@ -15,7 +15,7 @@ class bin_int {
 public:
 	bvec_size size;
 	bvec N;
-	bool TwosComp;
+
 	//Constructor from a string containing 0s and 1s.
 	bin_int(string S) : size(S.size()) {
 		for (bvec_size i = 0; i < S.size(); ++i) {
@@ -32,13 +32,34 @@ public:
 			if (!S[i]) { N.push_back(false); }
 			else { N.push_back(true); }
 		}
-	}
+	};
+
 	//Constructor from a size. Initializes all bits to 0.
 	bin_int(bvec_size k) : size(k) {
 		for (bvec_size i = 0; i < k; ++i) {
 			N.push_back(0);
 		}
 	};
+
+	//Constructor from a zero int.
+	bin_int(int a) : size(16) {
+		if (a == 0) {
+			while (a < 16) {
+				N.push_back(false);
+				++a;
+			}
+		}
+	}
+
+	bin_int min(bin_int&) {
+
+	}
+
+	void Nullify() {
+		for (bvec_size s = 0; s < this->size; ++s) {
+			N[s] = false;
+		}
+	}
 
 	void Print_Num() const {
 		for (bvec_size i = 0; i < this->size; ++i) {
@@ -71,33 +92,29 @@ public:
 		}
 	}
 
-	bin_int* smaller(bin_int &X) {
-		bin_int* ptr;
+	bin_int smaller(bin_int &X) const{
+
 		if (X.size > this->size) { 
-			ptr = this;
-			return ptr;
+			return *this;
 		}
 		else {
-			ptr = &X;
-			return ptr;;
+			return X;
 		}
 	}
 
-	bin_int* bigger(bin_int &X) {
-		bin_int* ptr;
+	bin_int bigger(bin_int &X) const{
+
 		if (X.size > this->size) {
-			ptr = &X;
-			return ptr;
+			return X;
 		}
 		else { 
-			ptr = this;
-			return ptr;
+			return *this;
 		}
 	}
 
 	bin_int operator+ (bin_int & X) {
 		bool carry = false;
-		bin_int R(X.size + 1);
+		bin_int R(X.size);
 		for (bvec_size i = 0; i < X.size; ++i) {
 			if (carry) {
 				if ((X.N[i] && !this->N[i]) || (!X.N[i] && this->N[i])) {
@@ -129,22 +146,18 @@ public:
 			}
 		}
 
-		if (carry) { *(R.N.end() - 1) = true; }
-		else { R.N.erase(R.N.end() - 1); }
-
 		R.Update();
 		return R;
 	}
 
-	bin_int operator- (bin_int X) {
+	bin_int operator- (bin_int & X) {
 		if (*this == X) {
-			string zero = "0";
-			bin_int Zero(zero);
-			return Zero;
+			bin_int zero(X.size);
+			return zero;
 		}
-		X.Negate();
-		bin_int R = *this + X;
-		if (R.size > X.size) { R.N.erase(R.N.end() - 1); --R.size; }
+		bin_int R = X;
+		R.Negate();
+		R += *this;
 		return R;
 	}
 
@@ -158,38 +171,151 @@ public:
 
 	bin_int operator* (bin_int & X) {
 		bin_int R(this->size + X.size), Aux = *this;
-		while (Aux.size < R.size) {
-			Aux.N.insert(Aux.N.begin(), 1, false);
-			++Aux.size;
+		if (X.N[0]) { 
+			R = R + Aux; 
+
 		}
-		if (X.N[0]) { R = R + Aux; }
 		for (bvec_size i = 1; i < X.size; ++i) {
 			Aux >> 1;
 			if (X.N[i]) {
 				R = R + Aux;
+
 			}
 		}
-		if (!(*(R.N.end() - 1))) { 
-			R.N.erase(R.N.end() - 1);
-			--R.size;
-		}
-		R.Update();
+		R.Update();	
 		return R;
 	}
 	
 	bool operator== (bin_int & X) {
-		bvec_size s = (*(X.smaller(*this))).size;
-		bin_int* ptr = X.bigger(*this);
-		for (bvec_size i = 0; i < s; ++i) {
+		for (bvec_size i = 0; i < this->size; ++i) {
 			if (this->N[i] != X.N[i]) { return false; }
 		}
-		while (s < ptr->size) {
-			if (ptr->N[s]) { return false; }
-			++s;
+		return true;
+	}
+
+	bool operator!= (bin_int & X) {
+		return !(*this == X);
+	}
+	//*this < X
+	bool operator< (bin_int & X) {
+		if ((*(this->N.end() - 1)) && (!*(X.N.end() - 1))) { return true; }
+		else if ((!*(this->N.end() - 1)) && (*(X.N.end() - 1))) { return false; }
+		else if (!*(this->N.end() - 1) && !*(X.N.end() - 1)) {
+			for (bvec_size i = X.size - 2; i >= 0;) {
+				if ((!this->N[i]) && ((X.N[i]))) {
+					return true;
+				}
+				if (i == 0) { goto l1; }
+				else {
+					--i;
+				}
+			}
+			l1:
+			return false;
+		}
+		else {
+			bin_int N1 = *this, N2 = X;
+			N1.Negate();
+			N2.Negate();
+			return (N1 > N2);
+		}
+		
+	}
+
+	bool operator> (bin_int & X) {
+		if ((!(*this < X)) && (!(*this == X))) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 
+	bool operator>= (bin_int & X) {
+		return (!(*this < X));
+	}
+
+	bool operator<= (bin_int & X) {
+		return (!(*this > X));
+	}
+
+	void operator+= (bin_int & X) {
+		*this = *this + X;
+	}
+
+	void operator-= (bin_int & X) {
+		*this = *this - X;
+	}
+
+	void operator*= (bin_int & X) {
+		*this = *this * X;
+	}
+
+	void operator++ (void) {
+		if (!this->N[this->size - 1]) {
+			for (bvec_size i = 0; i < this->size; ++i) {
+				if (this->N[i]) { 
+					this->N[i] = false; 
+				}
+				else { 
+					this->N[i] = true; 
+					break;
+				}
+			}
+		}
+		else {
+			this->Negate();
+			--(*this);
+			this->Negate();
+		}
+	}
+
+	void operator-- (void) {
+		if (!this->N[this->size - 1]) {
+			for (bvec_size i = 0; i < this->size; ++i) {
+				if (!this->N[i]) { 
+					this->N[i] = true; 
+				}
+				else { 
+					this->N[i] = false;
+					break;
+				}
+			}
+		}
+		else {
+			this->Negate();
+			++(*this);
+			this->Negate();
+		}
+	}
 };
 
+bin_int min(bin_int & X, bin_int & Y) {
+	if (X < Y) {
+		return X;
+	}
+	else {
+		return Y;
+	}
+}
 
+bin_int max(bin_int & X, bin_int & Y) {
+	if (X < Y) {
+		return Y;
+	}
+	else {
+		return X;
+	}
+}
+
+bin_int abs(bin_int & X) {
+	if (X.N[X.size - 1]) {
+		bin_int p = X;
+		p.Negate();
+		return p;
+	}
+	else {
+		return X;
+	}
+}
 #endif
