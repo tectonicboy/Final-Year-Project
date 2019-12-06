@@ -46,7 +46,7 @@ public:
 	//Constructor from a zero int.
 	bin_int(int a) : size(BITSIZE) {
 		if (a == 0) {
-			while (a < 16) {
+			while (a < BITSIZE) {
 				N.push_back(false);
 				++a;
 			}
