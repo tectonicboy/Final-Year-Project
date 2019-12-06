@@ -11,6 +11,8 @@ using namespace std;
 typedef vector<bool>::size_type bvec_size;
 typedef vector<bool> bvec;
 
+#define BITSIZE 16
+
 class bin_int {
 public:
 	bvec_size size;
@@ -42,7 +44,7 @@ public:
 	};
 
 	//Constructor from a zero int.
-	bin_int(int a) : size(16) {
+	bin_int(int a) : size(BITSIZE) {
 		if (a == 0) {
 			while (a < 16) {
 				N.push_back(false);
@@ -50,6 +52,7 @@ public:
 			}
 		}
 	}
+
 
 	void Nullify() {
 		for (bvec_size s = 0; s < this->size; ++s) {
@@ -166,7 +169,7 @@ public:
 	}
 
 	bin_int operator* (bin_int & X) {
-		bin_int R(this->size + X.size), Aux = *this;
+		bin_int R(X.size), Aux = *this;
 		if (X.N[0]) { 
 			R = R + Aux; 
 
@@ -184,7 +187,7 @@ public:
 	
 	bool operator== (bin_int & X) {
 		for (bvec_size i = 0; i < this->size; ++i) {
-			if (this->N[i] != X.N[i]) { return false; }
+			if ((this->N[i]) != (X.N[i])) { return false; }
 		}
 		return true;
 	}
@@ -192,21 +195,32 @@ public:
 	bool operator!= (bin_int & X) {
 		return !(*this == X);
 	}
-	//*this < X
+	//*this < X. NEEDS FIXING!!!
 	bool operator< (bin_int & X) {
-		if ((*(this->N.end() - 1)) && (!*(X.N.end() - 1))) { return true; }
-		else if ((!*(this->N.end() - 1)) && (*(X.N.end() - 1))) { return false; }
-		else if (!*(this->N.end() - 1) && !*(X.N.end() - 1)) {
-			for (bvec_size i = X.size - 2; i >= 0;) {
-				if ((!this->N[i]) && ((X.N[i]))) {
-					return true;
+		if ( (*(this->N.end() - 1)) && (!(*(X.N.end() - 1))) ) { return true; }
+		else if ( (!(*(this->N.end() - 1))) && (*(X.N.end() - 1)) ) { return false; }
+		else if ( (!(*(this->N.end() - 1))) && (!(*(X.N.end() - 1))) ) {
+			for (bvec_size i = (X.size - 2);; --i) {
+				if (i == 0) {
+					//cout << "\tComparing: this->N[i] = " << this->N[i] << ", X.N[i] = " << X.N[i] << "\n";
+					if ((this->N[i]) && (!(X.N[i]))) {
+						return false;
+					}
+					if ((!(this->N[i])) && (X.N[i])) {
+						return true;
+					}
+					break;
 				}
-				if (i == 0) { goto l1; }
 				else {
-					--i;
+					//cout << "\tComparing: this->N[i] = " << this->N[i] << ", X.N[i] = " << X.N[i] << "\n";
+					if ((this->N[i]) && (!(X.N[i]))) {
+						return false;
+					}
+					if ((!(this->N[i])) && (X.N[i])) {
+						return true;
+					}
 				}
 			}
-			l1:
 			return false;
 		}
 		else {
@@ -217,9 +231,10 @@ public:
 		}
 		
 	}
-
+	//*this > X
 	bool operator> (bin_int & X) {
-		if ((!(*this < X)) && (!(*this == X))) {
+
+		if ( (!(*this < X)) && (!(*this == X)) ) {
 			return true;
 		}
 		else {
@@ -311,7 +326,8 @@ bin_int abs(bin_int & X) {
 		return p;
 	}
 	else {
-		return X;
+		bin_int p = X;
+		return p;
 	}
 }
 #endif
