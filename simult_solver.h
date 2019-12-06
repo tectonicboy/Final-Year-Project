@@ -27,7 +27,7 @@ T LCM(T a, T b) {
 			if ((*(V.end() - 2)) == zero) {
 				gcd = r1;
 				cout << "\t\t**** GCD = "; gcd.Print_Num(); cout << " *****\n";
-				break;
+				goto l1;
 			}
 			r2 = *(V.end() - 1);
 		}
@@ -40,7 +40,7 @@ T LCM(T a, T b) {
 			if ((*(V.end() - 2)) == zero) {
 				gcd = r1;
 				cout << "\t\t***** GCD = "; gcd.Print_Num(); cout << " *****\n";
-				break;
+				goto l1;
 			}
 			e = abs(aux);
 			r = *(V.end() - 2);
@@ -58,6 +58,7 @@ T LCM(T a, T b) {
 		r0 = r1, r1 = r2;
 		V = {};
 	}
+	l1:
 	T c = (a * b);
 	lcm = abs(c);
 	T counter(0);
