@@ -43,7 +43,7 @@ public:
 		}
 	};
 
-	//Constructor from a zero int.
+	//Constructor from a zero int. Initializes all bits to 0.
 	bin_int(int a) : size(BITSIZE) {
 		if (a == 0) {
 			while (a < BITSIZE) {
