@@ -91,26 +91,6 @@ public:
 		}
 	}
 
-	bin_int smaller(bin_int &X) const{
-
-		if (X.size > this->size) { 
-			return *this;
-		}
-		else {
-			return X;
-		}
-	}
-
-	bin_int bigger(bin_int &X) const{
-
-		if (X.size > this->size) {
-			return X;
-		}
-		else { 
-			return *this;
-		}
-	}
-
 	bin_int operator+ (bin_int & X) {
 		bool carry = false;
 		bin_int R(X.size);
