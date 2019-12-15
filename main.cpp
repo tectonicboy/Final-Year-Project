@@ -126,11 +126,10 @@ int main(void) {
 		MinusFive(minusfive),
 		Six(six),
 		MinusSix(minussix);
-	string test1 = "0001111000000000";
-	string test2 = "0101000000000000";
-	bin_int Test1(test1), Test2(test2);
+	
+	
 
-	bin_int Result = Test1 / Test2;
+	bin_int Result = NinetyOne / MinusThirteen;
 
 	Result.Print_Num(); cout << "\n";
 	
