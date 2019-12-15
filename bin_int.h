@@ -149,9 +149,27 @@ public:
 	}
 
 	bin_int operator* (bin_int & X) {
+		bool b1 = false, b2 = false, b3 = false;
+		//If both are negative
+		if ((this->N[this->size - 1]) && (X.N[X.size - 1])) {
+			this->Negate();
+			b1 = true;
+			X.Negate();
+			b2 = true;
+		}
+		if ((this->N[this->size - 1]) && !(X.N[X.size - 1])) {
+			b3 = true;
+			b1 = true;
+			this->Negate();
+		}
+		if (!(this->N[this->size - 1]) && (X.N[X.size - 1])) {
+			b3 = true;
+			b2 = true;
+			X.Negate();
+		}
 		bin_int R(X.size), Aux = *this;
-		if (X.N[0]) { 
-			R = R + Aux; 
+		if (X.N[0]) {
+			R = R + Aux;
 
 		}
 		for (bvec_size i = 1; i < X.size; ++i) {
@@ -161,10 +179,46 @@ public:
 
 			}
 		}
-		R.Update();	
+		if (b1) { this->Negate(); }
+		if (b2) { X.Negate(); }
+		if (b3) { R.Negate(); }
 		return R;
 	}
-	
+
+	bin_int operator/ (bin_int & X) {
+		bool b1 = false, b2 = false, b3 = false;
+		bin_int counter(0), zero(0);
+		if (X == zero) {
+			cout << "ERROR: Just don't divide by zero.\n";
+			return zero;
+		}
+		if (*this == zero) { return zero; }
+		if ((this->N[this->size - 1]) && (X.N[X.size - 1])) {
+			this->Negate();
+			b1 = true;
+			X.Negate();
+			b2 = true;
+		}
+		if ((this->N[this->size - 1]) && !(X.N[X.size - 1])) {
+			b3 = true;
+			b1 = true;
+			this->Negate();
+		}
+		if (!(this->N[this->size - 1]) && (X.N[X.size - 1])) {
+			b3 = true;
+			b2 = true;
+			X.Negate();
+		}
+		while (*this > zero) {
+			*this -= X;
+			++counter;
+		}
+		if (b1) { this->Negate(); }
+		if (b2) { X.Negate(); }
+		if (b3) { counter.Negate(); }
+		return counter;
+	}
+
 	bool operator== (bin_int & X) {
 		for (bvec_size i = 0; i < this->size; ++i) {
 			if ((this->N[i]) != (X.N[i])) { return false; }
@@ -175,14 +229,12 @@ public:
 	bool operator!= (bin_int & X) {
 		return !(*this == X);
 	}
-	//*this < X. NEEDS FIXING!!!
 	bool operator< (bin_int & X) {
-		if ( (*(this->N.end() - 1)) && (!(*(X.N.end() - 1))) ) { return true; }
-		else if ( (!(*(this->N.end() - 1))) && (*(X.N.end() - 1)) ) { return false; }
-		else if ( (!(*(this->N.end() - 1))) && (!(*(X.N.end() - 1))) ) {
+		if ((*(this->N.end() - 1)) && (!(*(X.N.end() - 1)))) { return true; }
+		else if ((!(*(this->N.end() - 1))) && (*(X.N.end() - 1))) { return false; }
+		else if ((!(*(this->N.end() - 1))) && (!(*(X.N.end() - 1)))) {
 			for (bvec_size i = (X.size - 2);; --i) {
 				if (i == 0) {
-					//cout << "\tComparing: this->N[i] = " << this->N[i] << ", X.N[i] = " << X.N[i] << "\n";
 					if ((this->N[i]) && (!(X.N[i]))) {
 						return false;
 					}
@@ -192,7 +244,6 @@ public:
 					break;
 				}
 				else {
-					//cout << "\tComparing: this->N[i] = " << this->N[i] << ", X.N[i] = " << X.N[i] << "\n";
 					if ((this->N[i]) && (!(X.N[i]))) {
 						return false;
 					}
@@ -209,12 +260,12 @@ public:
 			N2.Negate();
 			return (N1 > N2);
 		}
-		
+
 	}
 	//*this > X
 	bool operator> (bin_int & X) {
 
-		if ( (!(*this < X)) && (!(*this == X)) ) {
+		if ((!(*this < X)) && (!(*this == X))) {
 			return true;
 		}
 		else {
@@ -242,14 +293,18 @@ public:
 		*this = *this * X;
 	}
 
+	void operator/= (bin_int & X) {
+		*this = *this / X;
+	}
+
 	void operator++ (void) {
 		if (!this->N[this->size - 1]) {
 			for (bvec_size i = 0; i < this->size; ++i) {
-				if (this->N[i]) { 
-					this->N[i] = false; 
+				if (this->N[i]) {
+					this->N[i] = false;
 				}
-				else { 
-					this->N[i] = true; 
+				else {
+					this->N[i] = true;
 					break;
 				}
 			}
@@ -264,10 +319,10 @@ public:
 	void operator-- (void) {
 		if (!this->N[this->size - 1]) {
 			for (bvec_size i = 0; i < this->size; ++i) {
-				if (!this->N[i]) { 
-					this->N[i] = true; 
+				if (!this->N[i]) {
+					this->N[i] = true;
 				}
-				else { 
+				else {
 					this->N[i] = false;
 					break;
 				}
