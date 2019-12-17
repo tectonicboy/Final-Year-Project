@@ -1,15 +1,89 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 #include "bin_int.h"
 #include "simult_solver.h"
 
+//typedef vector<bool> bvec;
+//typedef vector<bool>::iterator bvec_it;
+
 using namespace std;
+
+/*vector<vector<bin_int>> Split(bin_int A, bin_int B, short k) {
+	vector<bin_int> V, VA, VB;
+	bool stop1 = false, stop2 = false;
+	short aux = ceil(A.N.size() / k), num_pts = (aux * 2) - 3, counter = 1;
+	string s = "";
+	cout << "Please input" << num_pts << " points in binary. LSB is the leftmost bit.\n";
+	//The vector of binary integers containing the points to evaluate at.
+	//ADD FUNCTIONALITY FOR ZERO AND INFINITY WHICH WILL ALWAYS BE CHOSEN??
+	while (counter <= (num_pts)) {
+		cin >> s;
+		V.push_back(bin_int(s));
+		++counter;
+	}
+	counter = 1;
+	bvec_it it1 = A.N.begin(), it2 = A.N.begin() + aux;
+	//VA is the vector containing the split first number A as separate binary numbers.
+	while (!stop2) {
+		if (stop1) { stop2 = true; }
+		bvec vec(it2, it2);
+		VA.push_back(bin_int(vec));
+		it1 = it2;
+		while (counter <= aux) {
+			if (it2 != A.N.end()) {
+				++it2;
+			}
+			else {
+				stop1 = true;
+				goto label1;
+			}
+			++counter;
+		}
+	label1:
+	}
+	stop1 = false, stop2 = false;
+	counter = 1;
+	//VB is the vector containing the split second number B as separate binary numbers.
+	it1 = B.N.begin(), it2 = B.N.begin() + aux;
+	while (!stop2) {
+		if (stop1) { stop2 = true; }
+		bvec vec(it2, it2);
+		VB.push_back(bin_int(vec));
+		it1 = it2;
+		while (counter <= aux) {
+			if (it2 != B.N.end()) {
+				++it2;
+			}
+			else {
+				stop1 = true;
+				goto label2;
+			}
+			++counter;
+		}
+	label2:
+	}
+	counter = 1;
+	--num_pts;
+	//Remember to add functionality for x^0 (the last term) after the loop.
+	while (num_pts >= 0) {
+		bin_int point = V[counter];
+		while (counter) {
+			point *= point;
+		}
+
+		--num_pts;
+	}
+}
+
+*/
 
 int main(void) {
 	char c = '0';
 	int j = 0;
-	/*while (j == 0) {
+	while (j == 0) {
 		cout << "\t\t**** TESTING INITIATED ****\nEnter 0 to quit, 1 to test LCM, 2 to test simultaneous solver.\n";
 		cin >> c;
 		if (c == '0') {
@@ -46,23 +120,25 @@ int main(void) {
 				--n;
 			}
 			cout << "Ready to input the matrix:\n";
-			for (auto i = 0; i < V.size(); ++i) {
-				for (auto j = 0; j < (V[i]).size(); ++j) {
+			for (unsigned short i = 0; i < V.size(); ++i) {
+				for (unsigned short j = 0; j < (V[i]).size(); ++j) {
 					(V[i][j]).Print_Num(); cout << " ";
 				}
 				cout << "\n";
 			}
-			Solve(V, 4, 5);
+			Solve(V);
 			cout << "The solution matrix:\n";
-			for (auto i = 0; i < V.size(); ++i) {
-				for (auto j = 0; j < (V[i]).size(); ++j) {
-					(V[i][j]).Print_Num(); cout << " ";
+			for (unsigned short i = 0; i < V.size(); ++i) {
+				for (unsigned short j = 0; j < (V[i]).size(); ++j) {
+				(V[i][j]).Print_Num(); cout << " ";
 				}
 				cout << "\n";
 			}
 		}
-	}*/
+	}
 	
+
+	/*
 	//13
 	string thirteen = "1011000000000000";
 	//-13
@@ -126,12 +202,17 @@ int main(void) {
 		MinusFive(minusfive),
 		Six(six),
 		MinusSix(minussix);
-	
-	
 
-	bin_int Result = NinetyOne / MinusThirteen;
+	string test2 = "0110000000000000";
+	string test1 = "0101010000000000";
+	bin_int Dividend(test1);
+	bin_int Divisor(test2);
+
+	bin_int Result = Dividend / Divisor;
 
 	Result.Print_Num(); cout << "\n";
+	*/
 	
+
 	return 0;
 }
