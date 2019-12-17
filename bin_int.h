@@ -187,33 +187,33 @@ public:
 
 	bin_int operator/ (bin_int & X) {
 		bool b1 = false, b2 = false, b3 = false;
-		bin_int counter(0), zero(0);
+		bin_int counter(0), zero(0), copy = *this;
 		if (X == zero) {
 			cout << "ERROR: Just don't divide by zero.\n";
 			return zero;
 		}
-		if (*this == zero) { return zero; }
-		if ((this->N[this->size - 1]) && (X.N[X.size - 1])) {
-			this->Negate();
+		if (copy == zero) { return zero; }
+		if ((copy.N[copy.size - 1]) && (X.N[X.size - 1])) {
+			copy.Negate();
 			b1 = true;
 			X.Negate();
 			b2 = true;
 		}
-		if ((this->N[this->size - 1]) && !(X.N[X.size - 1])) {
+		if ((copy.N[copy.size - 1]) && !(X.N[X.size - 1])) {
 			b3 = true;
 			b1 = true;
-			this->Negate();
+			copy.Negate();
 		}
-		if (!(this->N[this->size - 1]) && (X.N[X.size - 1])) {
+		if (!(copy.N[copy.size - 1]) && (X.N[X.size - 1])) {
 			b3 = true;
 			b2 = true;
 			X.Negate();
 		}
-		while (*this > zero) {
-			*this -= X;
+		while (copy > zero) {
+			copy -= X;
 			++counter;
 		}
-		if (b1) { this->Negate(); }
+		if (b1) { copy.Negate(); }
 		if (b2) { X.Negate(); }
 		if (b3) { counter.Negate(); }
 		return counter;
