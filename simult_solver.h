@@ -39,7 +39,7 @@ T LCM(T &a, T &b) {
 			}
 			if ((*(V.end() - 2)) == zero) {
 				gcd = r1;
-				goto l1;
+				goto l3;
 			}
 			r2 = *(V.end() - 1);
 		}
@@ -50,7 +50,7 @@ T LCM(T &a, T &b) {
 			}
 			if ((*(V.end() - 2)) == zero) {
 				gcd = r1;
-				goto l1;
+				goto l3;
 			}
 			e = abs(aux);
 			r = *(V.end() - 2);
@@ -67,13 +67,13 @@ T LCM(T &a, T &b) {
 		r0 = r1, r1 = r2;
 		V = {};
 	}
-	l1:
+	l3:
 	T c = (a * b);
 	lcm = abs(c);
 	lcm /= gcd;
 	if (b1) { a.Negate(); }
 	if (b2) { b.Negate(); }
-	cout << "LCM = "; lcm.Print_Num(); cout << "\n";
+	//cout << "LCM = "; lcm.Print_Num(); cout << "\n";
 	return lcm;
 }
 
@@ -85,125 +85,161 @@ Furthermore, the template function assumes that the following functionality for 
 2. You can initialize a variable of type T equaling zero by writing "T var_name(0)", where 0 is an int.
 */
 template <typename T>
-void Solve (vector<vector<T>> &V, int r, int c){
-	int r_curr = 1, c_pivot = 0, r_pivot = 0;
-	T lcm(0), pivot(0), current(0), pivaux(0), curraux(0), zero(0), XX(0), YY(0);
+void Solve (vector<vector<T>> &V){
+	short int rows = V.size(), columns = V[0].size(), r_curr = 1, r_pivot = 0, c_pivot = 0;
+	T pivot = V[0][0], current = V[0][1], zero(0), lcm(0);
 	vector<T> PivotRow, CurrentRow;
-	//Loop to triangulate the matrix.
-	while (c_pivot < c - 2) {
-		PivotRow = V[r_pivot];
+	//First triangulation loop.
+	while (r_pivot <= rows - 2) {
 		pivot = V[r_pivot][c_pivot];
-		//Loop defining what happens at each row.
-		while (r_curr <= r - 1) {
-			cout << "Entered. row_current = " << r_curr << "\n";
-			CurrentRow = V[r_curr];
+		PivotRow = V[r_pivot];
+		cout << "PivotRow = " << r_pivot << ", pivot = "; pivot.Print_Num(); cout << "\n";
+		//What happens at each row.
+		while (r_curr <= rows - 1) {
 			current = V[r_curr][c_pivot];
+			CurrentRow = V[r_curr];
+			cout << "\tCurrent row = " << r_curr << "\n";
+			cout << "\tcurrent = "; current.Print_Num(); cout << "\n";
 			if (current != zero) {
-				if (current == pivot) {
-					goto label1;
-				}
+				cout << "\tcurrent is not zero.\n";
 				if (pivot == zero) {
-					for (auto i = 0; (i < PivotRow.size()); ++i) {
+					cout << "\t\tpivot is zero. Multiplying current row by pivot row.\n";
+					//If pivot is zero, multiply the current row by the pivot row.
+					for (short int i = 0; i < columns; ++i) {
 						CurrentRow[i] *= PivotRow[i];
 					}
 				}
 				else {
+					cout << "\t\tpivot is not zero.\n";
+					if (pivot == current) { cout << "\t\tpivot = current.\n"; goto l1; }
+					//Find the lowest common multiple of the pivot and the current number.
 					lcm = LCM(pivot, current);
-					XX = abs(pivot);
-					YY = abs(current);
-					pivaux = lcm/XX ;
-					curraux = lcm/YY;
-					for (auto i = 0; i < PivotRow.size(); ++i) {
-						PivotRow[i] *= pivaux;
-						CurrentRow[i] *= curraux;
+					cout << "\t\tLCM = "; lcm.Print_Num(); cout << "\n";
+					//Calculate the absolute values.
+					pivot = abs(pivot);
+					current = abs(current);
+					cout << "\t\tabs(pivot) = "; pivot.Print_Num(); cout << ", abs(current) = "; current.Print_Num(); cout << "\n";
+					//These are the numbers we'll multiply the pivot row and current row by.
+					pivot = lcm / pivot;
+					current = lcm / current;
+					cout << "\t\tNumber to multiply pivot row by: "; pivot.Print_Num(); cout << "\n";
+					cout << "\t\tNumber to multiply current row by: "; current.Print_Num(); cout << "\n";
+					//Multiply the rows by the resulting numbers.
+					for (short int i = 0; i < columns; ++i) {
+						CurrentRow[i] *= current;
+						PivotRow[i] *= pivot;
 					}
-					label1:
-					//Both signs are the same.
-					if ( ((pivot > zero) && (current > zero)) || ((pivot < zero) && (current < zero)) ) {
-						for (auto i = 0; i < PivotRow.size(); ++i) {
+					pivot = PivotRow[c_pivot];
+					current = CurrentRow[c_pivot];
+					//Add or Subtract the pivot row FROM the current row depending on the signs of the pivot and current number.
+					if ((pivot < zero && current < zero) || (pivot > zero && current > zero)) {
+						l1:
+						cout << "\t\tSubtracting pivot row from current row.\n";
+						for (short int i = 0; i < columns; ++i) {
 							CurrentRow[i] -= PivotRow[i];
 						}
 					}
-					//The signs are different.
-					else if (((pivot > zero) && (current < zero)) || ((pivot < zero) && (current > zero))) {
-						for (auto i = 0; i < PivotRow.size(); ++i) {
+					else {
+						cout << "\t\tAdding pivot row to current row.\n";
+						for (short int i = 0; i < columns; ++i) {
 							CurrentRow[i] += PivotRow[i];
 						}
 					}
-					V[r_curr] = CurrentRow;
 				}
+				//Set the current row in the original equations matrix to be the new row.
+				V[r_curr] = CurrentRow;
 			}
 			++r_curr;
+			pivot = V[r_pivot][c_pivot];
+			PivotRow = V[r_pivot];
 		}
-		++c_pivot;
 		++r_pivot;
-		r_curr = r_pivot + 1; 
+		++c_pivot;
+		r_curr = r_pivot + 1;
 	}
-	cout << "The matrix after 1st reduction:\n";
-	for (auto i = 0; i < V.size(); ++i) {
-		for (auto j = 0; j < (V[i]).size(); ++j) {
+	cout << "The triangulated matrix:\n";
+	for (unsigned short i = 0; i < V.size(); ++i) {
+		for (unsigned short j = 0; j < (V[i]).size(); ++j) {
 			(V[i][j]).Print_Num(); cout << " ";
 		}
 		cout << "\n";
 	}
-	r_pivot = r - 1, c_pivot = c - 2, r_curr = r_pivot - 1;
-	//Loop to triangulate the matrix again.
-	while (c_pivot > 0) {
-		PivotRow = V[r_pivot];
+	r_pivot = rows - 1;
+	c_pivot = columns - 2;
+	r_curr = r_pivot - 1;
+	while (r_pivot >= 1) {
 		pivot = V[r_pivot][c_pivot];
-		//Loop defining what happens at each row.
+		PivotRow = V[r_pivot];
 		while (r_curr >= 0) {
-			cout << "Entered. row_current = " << r_curr << "\n";
-			CurrentRow = V[r_curr];
 			current = V[r_curr][c_pivot];
+			CurrentRow = V[r_curr];
 			if (current != zero) {
+				cout << "\tcurrent is not zero.\n";
 				if (pivot == zero) {
-					for (auto i = 0; i < PivotRow.size(); ++i) {
+					cout << "\t\tpivot is zero. Multiplying current row by pivot row.\n";
+					//If pivot is zero, multiply the current row by the pivot row.
+					for (short int i = 0; i < columns; ++i) {
 						CurrentRow[i] *= PivotRow[i];
 					}
 				}
 				else {
+					cout << "\t\tpivot is not zero.\n";
+					if (pivot == current) { cout << "\t\tpivot = current.\n"; goto l5; }
+					//Find the lowest common multiple of the pivot and the current number.
 					lcm = LCM(pivot, current);
-					XX = abs(pivot);
-					YY = abs(current);
-					pivaux = lcm / XX;
-					curraux = lcm / YY;
-					for (auto i = 0; i < PivotRow.size(); ++i) {
-						PivotRow[i] *= pivaux;
-						CurrentRow[i] *= curraux;
+					cout << "\t\tLCM = "; lcm.Print_Num(); cout << "\n";
+					//Calculate the absolute values.
+					pivot = abs(pivot);
+					current = abs(current);
+					cout << "\t\tabs(pivot) = "; pivot.Print_Num(); cout << ", abs(current) = "; current.Print_Num(); cout << "\n";
+					//These are the numbers we'll multiply the pivot row and current row by.
+					pivot = lcm / pivot;
+					current = lcm / current;
+					cout << "\t\tNumber to multiply pivot row by: "; pivot.Print_Num(); cout << "\n";
+					cout << "\t\tNumber to multiply current row by: "; current.Print_Num(); cout << "\n";
+					//Multiply the rows by the resulting numbers.
+					for (short int i = 0; i < columns; ++i) {
+						CurrentRow[i] *= current;
+						PivotRow[i] *= pivot;
 					}
-					//Both signs are the same.
-					if (((pivot > zero) && (current > zero)) || ((pivot < zero) && (current < zero))) {
-						for (auto i = 0; i < PivotRow.size(); ++i) {
+					pivot = PivotRow[c_pivot];
+					current = CurrentRow[c_pivot];
+					//Add or Subtract the pivot row FROM the current row depending on the signs of the pivot and current number.
+					if ((pivot < zero && current < zero) || (pivot > zero && current > zero)) {
+					l5:
+						cout << "\t\tSubtracting pivot row from current row.\n";
+						for (short int i = 0; i < columns; ++i) {
 							CurrentRow[i] -= PivotRow[i];
 						}
 					}
-					//The signs are different.
-					else if (((pivot > zero) && (current < zero)) || ((pivot < zero) && (current > zero))) {
-						for (auto i = 0; i < PivotRow.size(); ++i) {
+					else {
+						cout << "\t\tAdding pivot row to current row.\n";
+						for (short int i = 0; i < columns; ++i) {
 							CurrentRow[i] += PivotRow[i];
 						}
 					}
-					V[r_curr] = CurrentRow;
 				}
+				//Set the current row in the original equations matrix to be the new row.
+				V[r_curr] = CurrentRow;
 			}
 			--r_curr;
+			pivot = V[r_pivot][c_pivot];
+			PivotRow = V[r_pivot];
 		}
-		--c_pivot;
 		--r_pivot;
+		--c_pivot;
 		r_curr = r_pivot - 1;
 	}
-	cout << "The matrix after 2nd reduction:\n";
-	for (auto i = 0; i < V.size(); ++i) {
-		for (auto j = 0; j < (V[i]).size(); ++j) {
+	cout << "The TWICE triangulated matrix:\n";
+	for (short int i = 0; i < V.size(); ++i) {
+		for (short int j = 0; j < (V[i]).size(); ++j) {
 			(V[i][j]).Print_Num(); cout << " ";
 		}
 		cout << "\n";
 	}
-	//Loop to produce the final solution matrix by dividing at each row.
-	for (int F = 0; F < r; ++F) {
-		V[F][c - 1] /= V[F][F];
-		V[F][F] /= V[F][F];
+	//Part 3: row divisions to produce final result matrix.
+	for (short int i = 0; i < V.size(); ++i) {
+		V[i][columns - 1] /= V[i][i];
 	}
 }
 #endif
