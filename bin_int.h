@@ -11,7 +11,7 @@ using namespace std;
 typedef vector<bool>::size_type bvec_size;
 typedef vector<bool> bvec;
 
-#define BITSIZE 16
+constexpr unsigned short int BITSIZE = 16;
 
 class bin_int {
 public:
@@ -25,7 +25,10 @@ public:
 			else if (S[i] == '1') { N.push_back(true); }
 			else { cout << "WARNING: Construction string contains characters other than '0' and '1'.\n"; }
 		}
-
+		while (N.size() < BITSIZE) {
+			N.push_back(false);
+			++size;
+		}
 	};
 
 	//Constructor from a vector of bools.
@@ -33,6 +36,10 @@ public:
 		for (bvec_size i = 0; i < S.size(); ++i) {
 			if (!S[i]) { N.push_back(false); }
 			else { N.push_back(true); }
+		}
+		while (N.size() < BITSIZE) {
+			N.push_back(false);
+			++size;
 		}
 	};
 
@@ -61,7 +68,7 @@ public:
 	}
 
 	void Print_Num() const {
-		for (bvec_size i = 0; i < this->size; ++i) {
+		for (bvec_size i = 0; i < this->N.size(); ++i) {
 			cout << this->N[i];
 		}
 	}
