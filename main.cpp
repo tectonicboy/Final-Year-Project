@@ -6,30 +6,43 @@
 #include "bin_int.h"
 #include "simult_solver.h"
 
-//typedef vector<bool> bvec;
-//typedef vector<bool>::iterator bvec_it;
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
 
 using namespace std;
 
-/*vector<vector<bin_int>> Split(bin_int A, bin_int B, short k) {
-	vector<bin_int> V, VA, VB;
-	bool stop1 = false, stop2 = false;
-	short aux = ceil(A.N.size() / k), num_pts = (aux * 2) - 3, counter = 1;
+//Return type will be vector<vector<bin_int>>
+void Split(bin_int A, bin_int B, short k) {
+	vector<bin_int> V, VA, VB, VC, VD, VE;
+	bin_int acc1(0), acc2(0), point(0), zero(0), G1(0), G2(0), Gpoint(0);
+	bool stop1 = false;
+	cout << "A.N.size = " << A.N.size() << ", k = " << k << "\n";
+	double aux1 = A.N.size();
+	aux1 /= k;
+	cout << "aux1 = " << aux1 << "\n";
+	short aux = ceil(aux1), num_pts = (aux * 2) - 3, counter = 1;
+	cout << "AUX = " << aux << "\n";
 	string s = "";
-	cout << "Please input" << num_pts << " points in binary. LSB is the leftmost bit.\n";
-	//The vector of binary integers containing the points to evaluate at.
-	//ADD FUNCTIONALITY FOR ZERO AND INFINITY WHICH WILL ALWAYS BE CHOSEN??
-	while (counter <= (num_pts)) {
-		cin >> s;
-		V.push_back(bin_int(s));
-		++counter;
+	if (num_pts > 0) {
+		cout << "Please input " << num_pts << " points in binary. LSB is the leftmost bit.\n";
+		//The vector of binary integers containing the points to evaluate at.
+		//ADD FUNCTIONALITY FOR ZERO AND INFINITY WHICH WILL ALWAYS BE CHOSEN??
+		while (counter <= (num_pts)) {
+			cin >> s;
+			V.push_back(bin_int(s));
+			++counter;
+		}
+		cout << "The vector of evaluation points excluding zero and infinity:\n";
+		for (bvec_size i = 0; i < V.size(); ++i) {
+			V[i].Print_Num(); cout << " ";
+		}
+		cout << "\n";
 	}
 	counter = 1;
 	bvec_it it1 = A.N.begin(), it2 = A.N.begin() + aux;
-	//VA is the vector containing the split first number A as separate binary numbers.
-	while (!stop2) {
-		if (stop1) { stop2 = true; }
-		bvec vec(it2, it2);
+	//VA is the vector containing the split first number A as separate bin_ints.
+	while (!stop1) {
+		bvec vec(it1, it2);
 		VA.push_back(bin_int(vec));
 		it1 = it2;
 		while (counter <= aux) {
@@ -38,19 +51,18 @@ using namespace std;
 			}
 			else {
 				stop1 = true;
-				goto label1;
+				break;
 			}
 			++counter;
 		}
-	label1:
+		counter = 1;
 	}
-	stop1 = false, stop2 = false;
+	stop1 = false;
 	counter = 1;
-	//VB is the vector containing the split second number B as separate binary numbers.
+	//VB is the vector containing the split second number B as separate bin_ints.
 	it1 = B.N.begin(), it2 = B.N.begin() + aux;
-	while (!stop2) {
-		if (stop1) { stop2 = true; }
-		bvec vec(it2, it2);
+	while (!stop1) {
+		bvec vec(it1, it2);
 		VB.push_back(bin_int(vec));
 		it1 = it2;
 		while (counter <= aux) {
@@ -59,29 +71,84 @@ using namespace std;
 			}
 			else {
 				stop1 = true;
-				goto label2;
+				break;
 			}
 			++counter;
 		}
-	label2:
+		counter = 1;
 	}
-	counter = 1;
+	cout << "The split number A is:\n";
+	for (bvec_size i = 0; i < VA.size(); ++i) {
+		VA[i].Print_Num(); cout << " ";
+	}
+	cout << "\nThe split number B is:\n";
+	for (bvec_size i = 0; i < VB.size(); ++i) {
+		VB[i].Print_Num(); cout << " ";
+	}
+	cout << "\n";
+	//=============================================================================================
+	VC.push_back(*(VA.end() - 1)), VD.push_back(*(VB.end() - 1));
+	VC.push_back(*(VA.begin())), VD.push_back(*(VB.begin()));
 	--num_pts;
-	//Remember to add functionality for x^0 (the last term) after the loop.
 	while (num_pts >= 0) {
-		bin_int point = V[counter];
-		while (counter) {
-			point *= point;
+		counter = aux - 2;
+		point = V[num_pts];
+		Gpoint = point;
+		cout << "POINT: "; point.Print_Num(); cout << "\n";
+		for (vector<bin_int>::size_type i = 0; i < VA.size(); ++i) {
+			cout << "\t=========================================================================\n";
+			while (counter > i) {
+				cout << "POINT TIMES POINT!\n";
+				Gpoint *= point;
+				--counter;
+			}
+			counter = aux - 2;
+			cout << "\tTerms: VA[i] = "; VA[i].Print_Num(); cout << ", VB[i] = "; VB[i].Print_Num(); cout << "\n";
+			cout << "\tPoint to multiply terms by: "; Gpoint.Print_Num(); cout << "\n";
+			cout << "\t=========================================================================\n";
+			G1 = VA[i] * Gpoint;
+			G2 = VB[i] * Gpoint;
+			
+			acc1 += VA[i];
+			acc2 += VB[i];
 		}
-
+		acc1 = zero, acc2 = zero;
+		VC.push_back(acc1), VD.push_back(acc2);
 		--num_pts;
 	}
+	cout << "The two evaluation vectors are:\n";
+	cout << "The evaluation vector VC of As:\n";
+	for (bvec_size i = 0; i < VC.size(); ++i) {
+		VC[i].Print_Num(); cout << " ";
+	}
+	cout << "\nThe evaluation vector VD of Bs:\n";
+	for (bvec_size i = 0; i < VD.size(); ++i) {
+		VD[i].Print_Num(); cout << " ";
+	}
+	cout << "\n";
+	//==============================================================================================
+	for (vector<bin_int>::size_type i = 0; i < VD.size(); ++i) {
+		VE.push_back(VC[i] * VD[i]);
+	}
+	cout << "\nThe final evaluation vector VE:\n";
+	for (bvec_size i = 0; i < VE.size(); ++i) {
+		VE[i].Print_Num(); cout << " ";
+	}
+	cout << "\n";
 }
 
-*/
+
 
 int main(void) {
-	char c = '0';
+	
+	cout << "TESTING SPLITTING FUNCTION.\n";
+	string s1 = "1001111100010101", s2 = "0001010111110001";
+	bin_int N1(s1), N2(s2);
+	Split(N1, N2, 4);
+	
+
+
+	/*char c = '0';
 	int j = 0;
 	while (j == 0) {
 		cout << "\t\t**** TESTING INITIATED ****\nEnter 0 to quit, 1 to test LCM, 2 to test simultaneous solver.\n";
@@ -135,8 +202,8 @@ int main(void) {
 				cout << "\n";
 			}
 		}
-	}
-	
+	}*/
+
 
 	/*
 	//13
@@ -203,16 +270,16 @@ int main(void) {
 		Six(six),
 		MinusSix(minussix);
 
-	string test2 = "0110000000000000";
-	string test1 = "0101010000000000";
-	bin_int Dividend(test1);
-	bin_int Divisor(test2);
+	string test1 = "0000100000000000";
+	string test2 = "0101000000000000";
+	bin_int Test1(test1);
+	bin_int Test2(test2);
 
-	bin_int Result = Dividend / Divisor;
+	bin_int Result = Test1 + Test2;
 
 	Result.Print_Num(); cout << "\n";
-	*/
 	
+	*/
 
 	return 0;
 }
