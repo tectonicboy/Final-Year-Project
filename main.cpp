@@ -37,16 +37,18 @@ vector<vector<bin_int>> Split(bin_int A, bin_int B, short k) {
 	bvec_it it1 = A.N.begin(), it2 = A.N.begin() + aux5;
 	//VA is the vector containing the split first number A as separate bin_ints.
 	while (!stop1) {
-		cout << "ENTERED!\n";
 		if (stop2) { stop1 = true; }
-		++num_pts;
+		
 		bvec vec(it1, it2);
-		cout << "\tSPLIT VECTOR: ";
-		for (bvec_size i = 0; i < vec.size(); ++i) {
-			cout << vec[i];
+		if (vec.size() > 0) {
+			cout << "SPLIT VECTOR: ";
+			for (bvec_size i = 0; i < vec.size(); ++i) {
+				cout << vec[i];
+			}
+			cout << "\n";
+			VA.push_back(bin_int(vec));
+			++num_pts;
 		}
-		cout << "\n";
-		VA.push_back(bin_int(vec));
 		it1 = it2;
 		while (counter <= aux5) {
 			if (it2 != A.N.end()) {
@@ -70,7 +72,14 @@ vector<vector<bin_int>> Split(bin_int A, bin_int B, short k) {
 	while (!stop1) {
 		if (stop2) { stop1 = true; }
 		bvec vec(it1, it2);
-		VB.push_back(bin_int(vec));
+		if (vec.size() > 0) {
+			cout << "SPLIT VECTOR: ";
+			for (bvec_size i = 0; i < vec.size(); ++i) {
+				cout << vec[i];
+			}
+			cout << "\n";
+			VB.push_back(bin_int(vec));
+		}
 		it1 = it2;
 		while (counter <= aux5) {
 			if (it2 != B.N.end()) {
@@ -237,7 +246,7 @@ int main(void) {
 		   s2 = "0100001100001100";
 	bin_int N1(s1), N2(s2);
 	vector<vector<bin_int>> V_solve;
-	V_solve = Split(N1, N2, 3);
+	V_solve = Split(N1, N2, 4);
 	Solve(V_solve);
 
 	
