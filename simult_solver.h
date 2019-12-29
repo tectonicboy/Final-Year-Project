@@ -8,7 +8,7 @@ using namespace std;
 
 //The template function to find the Lowest Common Multiple of two numbers (whatever their encoding system is), implementing Euclid's Algorithm.
 template <typename T>
-T LCM(T &a, T &b) {
+T LCM(T& a, T& b) {
 	bool b1 = false, b2 = false;
 	T zero(0);
 	if (a < zero) {
@@ -62,18 +62,18 @@ T LCM(T &a, T &b) {
 				r2 = r;
 				wasE = false;
 			}
-			
+
 		}
 		r0 = r1, r1 = r2;
 		V = {};
 	}
-	l3:
-	T c = (a * b);
-	lcm = abs(c);
-	lcm /= gcd;
+l3:
+	T c = abs(a);
+	T d = abs(b);
+	lcm = c / gcd;
+	lcm *= d;
 	if (b1) { a.Negate(); }
 	if (b2) { b.Negate(); }
-	//cout << "LCM = "; lcm.Print_Num(); cout << "\n";
 	return lcm;
 }
 
@@ -85,7 +85,7 @@ Furthermore, the template function assumes that the following functionality for 
 2. You can initialize a variable of type T equaling zero by writing "T var_name(0)", where 0 is an int.
 */
 template <typename T>
-void Solve (vector<vector<T>> &V){
+void Solve(vector<vector<T>>& V) {
 	short int rows = V.size(), columns = V[0].size(), r_curr = 1, r_pivot = 0, c_pivot = 0;
 	T pivot = V[0][0], current = V[0][1], zero(0), lcm(0);
 	vector<T> PivotRow, CurrentRow;
@@ -93,19 +93,19 @@ void Solve (vector<vector<T>> &V){
 	while (r_pivot <= rows - 2) {
 		pivot = V[r_pivot][c_pivot];
 		PivotRow = V[r_pivot];
-		cout << "PivotRow = " << r_pivot << ", pivot = "; pivot.Print_Num(); cout << "\n";
+		cout << "PivotRow = " << r_pivot << ", pivot = " << pivot << "\n";
 		//What happens at each row.
 		while (r_curr <= rows - 1) {
 			current = V[r_curr][c_pivot];
 			CurrentRow = V[r_curr];
 			cout << "\tCurrent row = " << r_curr << "\n";
-			cout << "\tcurrent = "; current.Print_Num(); cout << "\n";
+			cout << "\tcurrent = " << current << "\n";
 			if (current != zero) {
 				cout << "\tcurrent is not zero.\n";
 				if (pivot == zero) {
 					cout << "\t\tpivot is zero. Multiplying current row by pivot row.\n";
 					//If pivot is zero, multiply the current row by the pivot row.
-					for (short int i = 0; i < columns; ++i) {
+					for (short i = 0; i < columns; ++i) {
 						CurrentRow[i] *= PivotRow[i];
 					}
 				}
@@ -122,26 +122,26 @@ void Solve (vector<vector<T>> &V){
 					//These are the numbers we'll multiply the pivot row and current row by.
 					pivot = lcm / pivot;
 					current = lcm / current;
-					cout << "\t\tNumber to multiply pivot row by: "; pivot.Print_Num(); cout << "\n";
-					cout << "\t\tNumber to multiply current row by: "; current.Print_Num(); cout << "\n";
+					cout << "\t\tNumber to multiply pivot row by: " << pivot << "\n";
+					cout << "\t\tNumber to multiply current row by: " << current << "\n";
 					//Multiply the rows by the resulting numbers.
-					for (short int i = 0; i < columns; ++i) {
+					for (short i = 0; i < columns; ++i) {
 						CurrentRow[i] *= current;
 						PivotRow[i] *= pivot;
 					}
 					pivot = PivotRow[c_pivot];
 					current = CurrentRow[c_pivot];
 					//Add or Subtract the pivot row FROM the current row depending on the signs of the pivot and current number.
-					if ((pivot < zero && current < zero) || (pivot > zero && current > zero)) {
-						l1:
+					if ((pivot < zero && current < zero) || (pivot > zero&& current > zero)) {
+					l1:
 						cout << "\t\tSubtracting pivot row from current row.\n";
-						for (short int i = 0; i < columns; ++i) {
+						for (short i = 0; i < columns; ++i) {
 							CurrentRow[i] -= PivotRow[i];
 						}
 					}
 					else {
 						cout << "\t\tAdding pivot row to current row.\n";
-						for (short int i = 0; i < columns; ++i) {
+						for (short i = 0; i < columns; ++i) {
 							CurrentRow[i] += PivotRow[i];
 						}
 					}
@@ -170,15 +170,18 @@ void Solve (vector<vector<T>> &V){
 	while (r_pivot >= 1) {
 		pivot = V[r_pivot][c_pivot];
 		PivotRow = V[r_pivot];
+		cout << "PivotRow = " << r_pivot << ", pivot = " << pivot << "\n";
 		while (r_curr >= 0) {
 			current = V[r_curr][c_pivot];
 			CurrentRow = V[r_curr];
+			cout << "\tCurrent row = " << r_curr << "\n";
+			cout << "\tcurrent = " << current << "\n";
 			if (current != zero) {
 				cout << "\tcurrent is not zero.\n";
 				if (pivot == zero) {
 					cout << "\t\tpivot is zero. Multiplying current row by pivot row.\n";
 					//If pivot is zero, multiply the current row by the pivot row.
-					for (short int i = 0; i < columns; ++i) {
+					for (short i = 0; i < columns; ++i) {
 						CurrentRow[i] *= PivotRow[i];
 					}
 				}
@@ -191,30 +194,30 @@ void Solve (vector<vector<T>> &V){
 					//Calculate the absolute values.
 					pivot = abs(pivot);
 					current = abs(current);
-					cout << "\t\tabs(pivot) = "; pivot.Print_Num(); cout << ", abs(current) = "; current.Print_Num(); cout << "\n";
+					cout << "\t\tabs(pivot) = " << pivot << ", abs(current) = " << current << "\n";
 					//These are the numbers we'll multiply the pivot row and current row by.
 					pivot = lcm / pivot;
 					current = lcm / current;
-					cout << "\t\tNumber to multiply pivot row by: "; pivot.Print_Num(); cout << "\n";
-					cout << "\t\tNumber to multiply current row by: "; current.Print_Num(); cout << "\n";
+					cout << "\t\tNumber to multiply pivot row by: " << pivot << "\n";
+					cout << "\t\tNumber to multiply current row by: " << current << "\n";
 					//Multiply the rows by the resulting numbers.
-					for (short int i = 0; i < columns; ++i) {
+					for (short i = 0; i < columns; ++i) {
 						CurrentRow[i] *= current;
 						PivotRow[i] *= pivot;
 					}
 					pivot = PivotRow[c_pivot];
 					current = CurrentRow[c_pivot];
 					//Add or Subtract the pivot row FROM the current row depending on the signs of the pivot and current number.
-					if ((pivot < zero && current < zero) || (pivot > zero && current > zero)) {
+					if ((pivot < zero && current < zero) || (pivot > zero&& current > zero)) {
 					l5:
 						cout << "\t\tSubtracting pivot row from current row.\n";
-						for (short int i = 0; i < columns; ++i) {
+						for (short i = 0; i < columns; ++i) {
 							CurrentRow[i] -= PivotRow[i];
 						}
 					}
 					else {
 						cout << "\t\tAdding pivot row to current row.\n";
-						for (short int i = 0; i < columns; ++i) {
+						for (short i = 0; i < columns; ++i) {
 							CurrentRow[i] += PivotRow[i];
 						}
 					}
@@ -231,15 +234,24 @@ void Solve (vector<vector<T>> &V){
 		r_curr = r_pivot - 1;
 	}
 	cout << "The TWICE triangulated matrix:\n";
-	for (short int i = 0; i < V.size(); ++i) {
-		for (short int j = 0; j < (V[i]).size(); ++j) {
+	for (short i = 0; i < V.size(); ++i) {
+		for (short j = 0; j < (V[i]).size(); ++j) {
 			(V[i][j]).Print_Num(); cout << " ";
 		}
 		cout << "\n";
 	}
 	//Part 3: row divisions to produce final result matrix.
-	for (short int i = 0; i < V.size(); ++i) {
+	for (short i = 0; i < V.size(); ++i) {
 		V[i][columns - 1] /= V[i][i];
+		V[i][i] /= V[i][i];
+	}
+	cout << "The result matrix:\n";
+	for (short i = 0; i < V.size(); ++i) {
+		for (short j = 0; j < (V[i]).size(); ++j) {
+			(V[i][j]).Print_Num(); cout << " ";
+		}
+
+		cout << "\n";
 	}
 }
 #endif
