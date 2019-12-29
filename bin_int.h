@@ -8,10 +8,10 @@
 
 using namespace std;
 
-typedef vector<bool>::size_type bvec_size;
 typedef vector<bool> bvec;
+typedef vector<bool>::size_type bvec_size;
 
-constexpr unsigned short int BITSIZE = 16;
+constexpr unsigned short BITSIZE = 16;
 
 class bin_int {
 public:
@@ -58,8 +58,8 @@ public:
 				++a;
 			}
 		}
-	}
 
+	}
 
 	void Nullify() {
 		for (bvec_size s = 0; s < this->size; ++s) {
@@ -98,7 +98,7 @@ public:
 		}
 	}
 
-	bin_int operator+ (bin_int & X) {
+	bin_int operator+ (bin_int& X) {
 		bool carry = false;
 		bin_int R(X.size);
 		for (bvec_size i = 0; i < X.size; ++i) {
@@ -136,7 +136,7 @@ public:
 		return R;
 	}
 
-	bin_int operator- (bin_int & X) {
+	bin_int operator- (bin_int& X) {
 		if (*this == X) {
 			bin_int zero(X.size);
 			return zero;
@@ -154,10 +154,11 @@ public:
 			--x;
 		}
 	}
+	//Printing a bin_int with an output stream. Definition outside class.
+	friend ostream& operator<<(ostream& O, const bin_int& X);
 
-	bin_int operator* (bin_int & X) {
+	bin_int operator* (bin_int& X) {
 		bool b1 = false, b2 = false, b3 = false;
-		//If both are negative
 		if ((this->N[this->size - 1]) && (X.N[X.size - 1])) {
 			this->Negate();
 			b1 = true;
@@ -177,13 +178,11 @@ public:
 		bin_int R(X.size), Aux = *this;
 		if (X.N[0]) {
 			R = R + Aux;
-
 		}
 		for (bvec_size i = 1; i < X.size; ++i) {
 			Aux >> 1;
 			if (X.N[i]) {
 				R = R + Aux;
-
 			}
 		}
 		if (b1) { this->Negate(); }
@@ -192,7 +191,7 @@ public:
 		return R;
 	}
 
-	bin_int operator/ (bin_int & X) {
+	bin_int operator/ (bin_int& X) {
 		bool b1 = false, b2 = false, b3 = false;
 		bin_int counter(0), zero(0), copy = *this;
 		if (X == zero) {
@@ -226,17 +225,17 @@ public:
 		return counter;
 	}
 
-	bool operator== (bin_int & X) {
+	bool operator== (bin_int& X) {
 		for (bvec_size i = 0; i < this->size; ++i) {
 			if ((this->N[i]) != (X.N[i])) { return false; }
 		}
 		return true;
 	}
 
-	bool operator!= (bin_int & X) {
+	bool operator!= (bin_int& X) {
 		return !(*this == X);
 	}
-	bool operator< (bin_int & X) {
+	bool operator< (bin_int& X) {
 		if ((*(this->N.end() - 1)) && (!(*(X.N.end() - 1)))) { return true; }
 		else if ((!(*(this->N.end() - 1))) && (*(X.N.end() - 1))) { return false; }
 		else if ((!(*(this->N.end() - 1))) && (!(*(X.N.end() - 1)))) {
@@ -269,8 +268,8 @@ public:
 		}
 
 	}
-	//*this > X
-	bool operator> (bin_int & X) {
+
+	bool operator> (bin_int& X) {
 
 		if ((!(*this < X)) && (!(*this == X))) {
 			return true;
@@ -280,27 +279,27 @@ public:
 		}
 	}
 
-	bool operator>= (bin_int & X) {
+	bool operator>= (bin_int& X) {
 		return (!(*this < X));
 	}
 
-	bool operator<= (bin_int & X) {
+	bool operator<= (bin_int& X) {
 		return (!(*this > X));
 	}
 
-	void operator+= (bin_int & X) {
+	void operator+= (bin_int& X) {
 		*this = *this + X;
 	}
 
-	void operator-= (bin_int & X) {
+	void operator-= (bin_int& X) {
 		*this = *this - X;
 	}
 
-	void operator*= (bin_int & X) {
+	void operator*= (bin_int& X) {
 		*this = *this * X;
 	}
 
-	void operator/= (bin_int & X) {
+	void operator/= (bin_int& X) {
 		*this = *this / X;
 	}
 
@@ -343,7 +342,7 @@ public:
 	}
 };
 
-bin_int min(bin_int & X, bin_int & Y) {
+bin_int min(bin_int& X, bin_int& Y) {
 	if (X < Y) {
 		return X;
 	}
@@ -352,7 +351,7 @@ bin_int min(bin_int & X, bin_int & Y) {
 	}
 }
 
-bin_int max(bin_int & X, bin_int & Y) {
+bin_int max(bin_int& X, bin_int& Y) {
 	if (X < Y) {
 		return Y;
 	}
@@ -361,15 +360,22 @@ bin_int max(bin_int & X, bin_int & Y) {
 	}
 }
 
-bin_int abs(bin_int & X) {
+bin_int abs(bin_int X) {
+	
 	if (X.N[X.size - 1]) {
-		bin_int p = X;
-		p.Negate();
-		return p;
+		X.Negate();
+		return X;
 	}
 	else {
-		bin_int p = X;
-		return p;
+		return X;
 	}
 }
+
+ostream& operator<<(ostream& O, const bin_int& X) {
+	for (bvec_size i = 0; i < X.N.size(); ++i) {
+		O << X.N[i];
+	}
+	return O;
+}
+
 #endif
