@@ -5,13 +5,15 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 
 using namespace std;
 
 typedef vector<bool> bvec;
 typedef vector<bool>::size_type bvec_size;
+typedef vector<bool>::iterator bvec_it;
 
-constexpr unsigned short BITSIZE = 16;
+unsigned short BITSIZE = 16;
 
 class bin_int {
 public:
@@ -43,6 +45,8 @@ public:
 		}
 	};
 
+
+
 	//Constructor from a size. Initializes all bits to 0.
 	bin_int(bvec_size k) : size(k) {
 		for (bvec_size i = 0; i < k; ++i) {
@@ -58,50 +62,52 @@ public:
 				++a;
 			}
 		}
-
 	}
 
+	//Set a number to the maximum possible positive number that can be stored with BITSIZE bits.
+	void set_max_pos() {
+		for (bvec::iterator i = this->N.begin(); i < this->N.end() - 1; ++i) {
+			*i = true;
+		}
+		*(this->N.end() - 1) = false;
+	}
+
+	//Set a number to the maximum possible negative number that can be stored with BITSIZE bits.
+	void set_max_neg() {
+		for (bvec::iterator i = this->N.begin(); i < this->N.end() - 1; ++i) {
+			*i = false;
+		}
+		*(this->N.end() - 1) = true;
+	}
+
+	//Set a number to zero.
 	void Nullify() {
-		for (bvec_size s = 0; s < this->size; ++s) {
+		for (bvec_size s = 0; s < this->N.size(); ++s) {
 			N[s] = false;
 		}
 	}
 
-	void Print_Num() const {
-		for (bvec_size i = 0; i < this->N.size(); ++i) {
-			cout << this->N[i];
-		}
-	}
 
 	void Update() {
 		size = N.size();
 	}
 
 	void Negate() {
-		bvec_size i = 0;
-		while (i < this->size) {
+		bin_int zero(0);
+		if (*this == zero) { return; }
+		for (bvec_size i = 0; i < this->N.size(); ++i) {
 			if (this->N[i]) { this->N[i] = false; }
 			else { this->N[i] = true; }
-			++i;
 		}
-		i = 0;
-		bool found = false;
-		while (i < this->size && !found) {
-			if (this->N[i]) {
-				this->N[i] = false;
-			}
-			else {
-				this->N[i] = true;
-				found = true;
-			}
-			++i;
-		}
+		string one = "1";
+		bin_int One(one);
+		*this += One;
 	}
 
 	bin_int operator+ (bin_int& X) {
 		bool carry = false;
-		bin_int R(X.size);
-		for (bvec_size i = 0; i < X.size; ++i) {
+		bin_int R(X.N.size()), zero(X.N.size());
+		for (bvec_size i = 0; i < X.N.size(); ++i) {
 			if (carry) {
 				if ((X.N[i] && !this->N[i]) || (!X.N[i] && this->N[i])) {
 					R.N[i] = false;
@@ -131,14 +137,17 @@ public:
 				}
 			}
 		}
-
-		R.Update();
+		if ((((*this > zero) && (X > zero)) && (R < zero)) || (((*this < zero) && (X < zero)) && (R > zero))) {
+			cout << "*********************************************************************************\n";
+			cout << "** ERROR: Arithmetic overflow: " << *this << " + " << X << "\n";
+			cout << "*********************************************************************************\n";
+		}
 		return R;
 	}
 
 	bin_int operator- (bin_int& X) {
 		if (*this == X) {
-			bin_int zero(X.size);
+			bin_int zero(X.N.size());
 			return zero;
 		}
 		bin_int R = X;
@@ -147,86 +156,118 @@ public:
 		return R;
 	}
 
-	void operator>> (unsigned short int x) {
+	void operator>> (unsigned short x) {
 		while (x > 0) {
 			this->N.erase(this->N.end() - 1);
 			this->N.insert(this->N.begin(), 1, false);
 			--x;
 		}
 	}
+
+	void operator<< (unsigned short x) {
+		while (x > 0) {
+			this->N.erase(this->N.begin());
+			this->N.insert((this->N.end() - 1), 1, *(this->N.end() - 1));
+			--x;
+		}
+	}
+
+
 	//Printing a bin_int with an output stream. Definition outside class.
 	friend ostream& operator<<(ostream& O, const bin_int& X);
 
 	bin_int operator* (bin_int& X) {
+		bin_int zero(0);
+		if (*this == zero || X == zero) {
+			return zero;
+		}
 		bool b1 = false, b2 = false, b3 = false;
-		if ((this->N[this->size - 1]) && (X.N[X.size - 1])) {
+		if ((this->N[this->N.size() - 1]) && (X.N[X.N.size() - 1])) {
 			this->Negate();
 			b1 = true;
 			X.Negate();
 			b2 = true;
 		}
-		if ((this->N[this->size - 1]) && !(X.N[X.size - 1])) {
+		if ((this->N[this->N.size() - 1]) && !(X.N[X.N.size() - 1])) {
 			b3 = true;
 			b1 = true;
 			this->Negate();
 		}
-		if (!(this->N[this->size - 1]) && (X.N[X.size - 1])) {
+		if (!(this->N[this->N.size() - 1]) && (X.N[X.N.size() - 1])) {
 			b3 = true;
 			b2 = true;
 			X.Negate();
 		}
 		bin_int R(X.size), Aux = *this;
 		if (X.N[0]) {
-			R = R + Aux;
+			R += Aux;
 		}
-		for (bvec_size i = 1; i < X.size; ++i) {
+		for (bvec_size i = 1; i < X.N.size(); ++i) {
 			Aux >> 1;
 			if (X.N[i]) {
-				R = R + Aux;
+				R += Aux;
 			}
 		}
 		if (b1) { this->Negate(); }
 		if (b2) { X.Negate(); }
 		if (b3) { R.Negate(); }
+		if ((b3 && (!(R.N[R.N.size() - 1]))) || ((!b3) && (R.N[R.N.size() - 1]))) {
+			cout << "*********************************************************************************\n";
+			cout << "** ERROR: Arithmetic overflow: " << *this << " * " << X << "\n";
+			cout << "*********************************************************************************\n";
+		}
 		return R;
 	}
 
-	bin_int operator/ (bin_int& X) {
+	bin_int operator/ (bin_int& Y) {
 		bool b1 = false, b2 = false, b3 = false;
-		bin_int counter(0), zero(0), copy = *this;
-		if (X == zero) {
-			cout << "ERROR: Just don't divide by zero.\n";
-			return zero;
+		bvec res;
+		bin_int vec(0);
+		if (Y == vec) {
+			cout << "************************************************************************************\n";
+			cout << "** ERROR: Just don't divide by zero: " << *this << " / " << Y << "\n";
+			cout << "************************************************************************************\n";
+			return vec;
 		}
-		if (copy == zero) { return zero; }
-		if ((copy.N[copy.size - 1]) && (X.N[X.size - 1])) {
-			copy.Negate();
-			b1 = true;
-			X.Negate();
+		if ((this->N[this->N.size() - 1]) && (Y.N[Y.N.size() - 1])) {
+			this->Negate();
+			Y.Negate();
 			b2 = true;
+			b1 = true;
 		}
-		if ((copy.N[copy.size - 1]) && !(X.N[X.size - 1])) {
+		if ((this->N[this->N.size() - 1]) && !(Y.N[Y.N.size() - 1])) {
 			b3 = true;
 			b1 = true;
-			copy.Negate();
+			this->Negate();
 		}
-		if (!(copy.N[copy.size - 1]) && (X.N[X.size - 1])) {
+		if (!(this->N[this->N.size() - 1]) && (Y.N[Y.N.size() - 1])) {
 			b3 = true;
 			b2 = true;
-			X.Negate();
+			Y.Negate();
 		}
-		while (copy > zero) {
-			copy -= X;
-			++counter;
+		for (bvec_it it1 = this->N.end() - 1; it1 >= this->N.begin(); --it1) {
+			vec.N.insert(vec.N.begin(), 1, *it1);
+			vec.N.erase(vec.N.end() - 1);
+			if (vec >= Y) {
+				res.insert(res.begin(), 1, true);
+				vec -= Y;
+			}
+			else {
+				res.insert(res.begin(), 1, false);
+			}
+			if (it1 == this->N.begin()) {
+				break;
+			}
 		}
-		if (b1) { copy.Negate(); }
-		if (b2) { X.Negate(); }
-		if (b3) { counter.Negate(); }
-		return counter;
+		bin_int Result(res);
+		if (b1) { this->Negate(); }
+		if (b2) { Y.Negate(); }
+		if (b3) { Result.Negate(); }
+		return Result;
 	}
 
 	bool operator== (bin_int& X) {
-		for (bvec_size i = 0; i < this->size; ++i) {
+		for (bvec_size i = 0; i < this->N.size(); ++i) {
 			if ((this->N[i]) != (X.N[i])) { return false; }
 		}
 		return true;
@@ -239,7 +280,7 @@ public:
 		if ((*(this->N.end() - 1)) && (!(*(X.N.end() - 1)))) { return true; }
 		else if ((!(*(this->N.end() - 1))) && (*(X.N.end() - 1))) { return false; }
 		else if ((!(*(this->N.end() - 1))) && (!(*(X.N.end() - 1)))) {
-			for (bvec_size i = (X.size - 2);; --i) {
+			for (bvec_size i = (X.N.size() - 2);; --i) {
 				if (i == 0) {
 					if ((this->N[i]) && (!(X.N[i]))) {
 						return false;
@@ -304,8 +345,8 @@ public:
 	}
 
 	void operator++ (void) {
-		if (!this->N[this->size - 1]) {
-			for (bvec_size i = 0; i < this->size; ++i) {
+		if (!this->N[this->N.size() - 1]) {
+			for (bvec_size i = 0; i < this->N.size(); ++i) {
 				if (this->N[i]) {
 					this->N[i] = false;
 				}
@@ -323,8 +364,8 @@ public:
 	}
 
 	void operator-- (void) {
-		if (!this->N[this->size - 1]) {
-			for (bvec_size i = 0; i < this->size; ++i) {
+		if (!this->N[this->N.size() - 1]) {
+			for (bvec_size i = 0; i < this->N.size(); ++i) {
 				if (!this->N[i]) {
 					this->N[i] = true;
 				}
@@ -362,7 +403,7 @@ bin_int max(bin_int& X, bin_int& Y) {
 
 bin_int abs(bin_int X) {
 	
-	if (X.N[X.size - 1]) {
+	if (X.N[X.N.size() - 1]) {
 		X.Negate();
 		return X;
 	}
