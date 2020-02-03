@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	string ss1 = "0", ss2 = "11111111000", ss3 = "1000000011111111", ss4 = "10000", ss5 = "1111111111111111";
+	bin_int Zero(ss1), Max(ss2), Max_Neg(ss3), One(ss4), MinusOne(ss5);
+	cout << "Testing comparison operators.\n";
+	//Testing comparison operators
+	cout << (Zero == Zero) << ", "
+		<< (Zero < One) << ", "
+		<< (One < Max) << ", "
+		<< (Zero <= One) << ", "
+		<< (One <= Max) << ", "
+		<< (One == Max) << ", "
+		<< (Max == Max) << ", "
+		<< (Max_Neg < Max) << ", "
+		<< (Max_Neg < Zero) << ", "
+		<< (Max_Neg <= Max) << ", "
+		<< (Max_Neg <= Zero) << ", "
+		<< (Max_Neg == Zero) << ", "
+		<< (Max > Max_Neg) << ", "
+		<< (Max < Zero) << ", "
+		<< (One > Max_Neg) << ", "
+		<< (Max >= Max_Neg) << ", "
+		<< (Max <= Zero) << ", "
+		<< (One >= Max_Neg);
+
+	cout << "\n\n\nTesting max, min and abs.\n";
+	//Testing max, min and abs:
+	cout << max(Zero, One) << "\n"
+		<< min(Zero, One) << "\n"
+		<< abs(One) << "\n"
+		<< abs(Zero) << "\n"
+		<< max(One, Max_Neg) << "\n"
+		<< min(One, Max_Neg) << "\n"
+		<< abs(Max_Neg) << "\n"
+		<< max(Max_Neg, Max_Neg) << "\n"
+		<< min(Max_Neg, Max_Neg) << "\n"
+		<< max(Zero, Max) << "\n"
+		<< min(Zero, Max) << "\n"
+		<< max(Zero, Max_Neg) << "\n"
+		<< min(Zero, Max_Neg) << "\n";
+	return 0;
+}

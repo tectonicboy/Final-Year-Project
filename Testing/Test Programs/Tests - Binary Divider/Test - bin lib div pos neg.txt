@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	int jj = 255;
+	vector<vector<int>> VAA;
+	vector<int> vaa;
+	while (jj > 0) {
+		for (int kk = jj; kk > 0; --kk) {
+			if (jj % kk == 0) {
+				vaa.push_back(kk);
+			}
+		}
+		VAA.push_back(vaa);
+		vaa = {};
+		--jj;
+	}
+
+	vector<vector<bin_int>> VBB;
+	vector<bin_int>vbb;
+	vector<bool>vb;
+	for (vector<vector<int>>::iterator it1 = VAA.begin(); it1 != VAA.end(); ++it1) {
+		for (vector<int>::iterator it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
+			while (*it2 > 0) {
+				vb.push_back(bool((*it2) % 2));
+				*it2 /= 2;
+			}
+			vbb.push_back(bin_int(vb));
+			vb = {};
+		}
+		VBB.push_back(vbb);
+		vbb = {};
+	}
+
+	
+	vector<vector<bin_int>>::iterator iter = VBB.begin();
+	string ss1 = "0", ss2 = "11111111000", ss3 = "1000000011111111";
+	bin_int Zero(ss1), Max(ss2), Max_Neg(ss3);
+	for (bin_int test1 = Max; test1 > Zero; --test1) {
+		for (vector<bin_int>::iterator it1 = (*iter).begin(); it1 != (*iter).end(); ++it1) {
+			(*it1).Negate();
+			cout << (test1 / (*it1)) << "\n";
+		}
+		if(iter != VBB.end()){
+			++iter;
+		}
+	}
+	
+
+	
+	
+
+	return 0;
+}

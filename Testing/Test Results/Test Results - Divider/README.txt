@@ -1,0 +1,2 @@
+The miscellaneous test (reporting errors when dividing by zero, and dividing zero by anything) does not 
+require a "correct" version, since the results are low enough in numbers to be easily checked by a human.

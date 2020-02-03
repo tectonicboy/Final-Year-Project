@@ -1,0 +1,27 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	string ss1 = "0", ss2 = "11111111000", ss3 = "1000000011111111";
+	bin_int Zero(ss1), Max(ss2), Max_Neg(ss3);
+	string one1 = "10000";
+	bin_int One1(one1);
+	Max.set_max_pos();
+	Max_Neg.set_max_neg();
+	cout << (Max + Zero) << "\n";
+	cout << (Max + One1) << "\n";
+	cout << (Max_Neg - Zero) << "\n";
+	cout << (Max_Neg - One1) << "\n";
+	return 0;
+}

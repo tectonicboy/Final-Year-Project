@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+vector<int> a;
+	int n, m, p;
+	for (int i = 0; i < 256; ++i) {
+		for (int j = 0; j < 256; ++j) {
+			p = i + j;
+			if (p < 0) {
+				p = p * (-1);
+				for (m = 0; p > 0; ++m)
+				{
+
+					int xx = p % 2;
+
+					a.push_back(p % 2);
+
+					p = p / 2;
+				}
+				while (a.size() < BITSIZE) {
+					a.push_back(0);
+				}
+				for (vector<int>::iterator it = a.begin(); it != a.end(); ++it) {
+					if (*it == 0) {
+						*it = 1;
+					}
+					else {
+						*it = 0;
+					}
+				}
+				for (vector<int>::iterator it = a.begin(); it != a.end(); ++it) {
+					if (*it == 1) {
+						*it = 0;
+					}
+					else {
+						*it = 1;
+						break;
+					}
+				}
+			}
+			else {
+				for (m = 0; p > 0; ++m){
+
+					int xx = p % 2;
+
+					a.push_back(p % 2);
+
+					p = p / 2;
+				}
+				while (a.size() < BITSIZE) {
+					a.push_back(0);
+				}
+			}
+			for (vector<int>::iterator it = a.begin(); it != a.end(); ++it) {
+				cout << *it;
+			}
+			a = {};
+			cout << "\n";
+		}
+	}
+	return 0;
+}

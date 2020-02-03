@@ -1,0 +1,28 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	string ss1 = "0", ss2 = "11111111000", ss3 = "1000000011111111", ss4 = "10000";
+	bin_int Zero(ss1), Max(ss2), Max_Neg(ss3), One(ss4);
+
+	//Testing error reporting on dividing by zero
+	cout << "Testing error reporting on dividing by zero\n";
+	cout << (Max / Zero) << "\n" << (Zero / Zero) << "\n" << (Max_Neg / Zero) << "\n";
+
+	//Testing dividing zero by anything
+	cout << "Testing dividing zero by anything\n";
+	cout << (Zero / Max) << "\n" << (Zero / Max_Neg) << "\n" << (Zero / One) << "\n";
+	
+	return 0;
+}

@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	int jj = 255;
+	vector<vector<int>> VAA;
+	vector<int> vaa;
+	while (jj > 0) {
+		for (int kk = jj; kk > 0; --kk) {
+			if (jj % kk == 0) {
+				vaa.push_back(kk);
+			}
+		}
+		VAA.push_back(vaa);
+		vaa = {};
+		--jj;
+	}
+
+	vector<vector<bin_int>> VBB;
+	vector<bin_int>vbb;
+	vector<bool>vb;
+	for (vector<vector<int>>::iterator it1 = VAA.begin(); it1 != VAA.end(); ++it1) {
+		for (vector<int>::iterator it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
+			while (*it2 > 0) {
+				vb.push_back(bool((*it2) % 2));
+				*it2 /= 2;
+			}
+			vbb.push_back(bin_int(vb));
+			vb = {};
+		}
+		VBB.push_back(vbb);
+		vbb = {};
+	}
+	for (vector<vector<bin_int>>::iterator it = VBB.begin(); it != VBB.end(); ++it) {
+		reverse((*it).begin(), (*it).end());
+	}
+
+	vector<vector<bin_int>>::iterator iter2 = VBB.begin();
+	while (iter2 != VBB.end()) {
+		for (vector<bin_int>::iterator it = (*iter2).begin(); it != (*iter2).end(); ++it) {
+			(*it).Negate();
+			cout << *it << "\n";
+		}
+		++iter2;
+	}
+	
+
+	return 0;
+}

@@ -1,0 +1,46 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	string ss1 = "0", ss2 = "11111111000", ss3 = "1000000011111111", ss4 = "10000", ss5 = "1111111111111111";
+	bin_int Zero(ss1), Max(ss2), Max_Neg(ss3), One(ss4), MinusOne(ss5);
+
+	//Testing Negate function (equivalent to multiplying by -1)
+	Zero.Negate(), One.Negate(), Max.Negate(), Max_Neg.Negate();
+	cout << Zero << "\n" << One << "\n" << Max << "\n" << Max_Neg << "\n";
+	Zero.Negate(), One.Negate(), Max.Negate(), Max_Neg.Negate();
+
+	cout << "\n";
+
+	//Testing left-shift
+	Zero.operator<<(1); //should be unchanged
+	cout << Zero << "\n";
+	One.operator<<(1); //should be turned into 0
+	cout << One << "\n";
+	Max.operator<<(4); //should have 4 ones left at start
+	cout << Max << "\n";
+
+	cout << "\n";
+	
+	
+	//Testing right-shift
+	Zero.operator>>(1); //should be unchanged
+	cout << Zero << "\n";
+	Max.operator>>(3); //should have 3 zeroes followed by 4 ones at start
+	cout << Max << "\n";
+	MinusOne.operator>>(10); //should have 10 zeroes at the start
+	cout << MinusOne << "\n";
+
+	return 0;
+}

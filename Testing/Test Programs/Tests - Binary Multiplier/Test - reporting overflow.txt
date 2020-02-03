@@ -1,0 +1,25 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+#include "bin_int.h"
+#include "functions.h"
+
+typedef vector<bool> bvec;
+typedef vector<bool>::iterator bvec_it;
+
+using namespace std;
+
+int main(void) {
+	string c1 = "1111111111111110", c2 = "0000000000000001",
+		c3 = "0100000000000000", c4 = "0111111111111111";
+	bin_int Mpos(c1), Mneg(c2), Two(c3), MinTwo(c4);
+	cout << (Mpos * Two) << "\n";
+	cout << (Mpos * MinTwo) << "\n";
+	cout << (Mneg * Two) << "\n";
+	cout << (Mneg * MinTwo) << "\n";
+
+	return 0;
+}
